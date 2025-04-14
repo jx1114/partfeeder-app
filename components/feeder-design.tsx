@@ -26,7 +26,6 @@ export default function FeederDesign({
   const [editingDimension, setEditingDimension] = useState<string | null>(null)
   const [editValue, setEditValue] = useState("")
 
-  // Relative positions (percent-based)
   const dimensionPositions: Record<string, { x: number; y: number }> = {
     A: { x: 3, y: 27 },
     B: { x: 5, y: 38 },
@@ -107,14 +106,14 @@ export default function FeederDesign({
               return (
                 <div
                   key={`dim-value-${dimension.id}`}
-                  className={`absolute bg-white dark:bg-gray-800 text-black dark:text-white px-2 py-1 rounded border text-xs cursor-pointer ${
+                  className={`absolute bg-white dark:bg-gray-800 text-black dark:text-white px-1 py-0.5 sm:px-2 sm:py-1 rounded border text-[10px] sm:text-xs cursor-pointer ${
                     activeDimension === dimension.id ? "border-blue-500" : "border-gray-300"
                   }`}
                   style={style}
                   onClick={() => !isEditing && handleDimensionClick(dimension.id)}
                 >
                   <div className="flex items-center gap-1">
-                    <span className="font-medium">{dimension.id}:</span>
+                    <span className="font-semibold">{dimension.id}:</span>
                     {isEditing ? (
                       <Input
                         type="number"
@@ -122,7 +121,7 @@ export default function FeederDesign({
                         onChange={handleInputChange}
                         onBlur={handleInputBlur}
                         onKeyDown={handleInputKeyDown}
-                        className="w-16 h-6 text-xs p-1"
+                        className="w-14 h-6 text-[10px] sm:text-xs p-1"
                         autoFocus
                       />
                     ) : (
