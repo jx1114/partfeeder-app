@@ -26,7 +26,7 @@ export default function FeederDesign({
   const [editingDimension, setEditingDimension] = useState<string | null>(null)
   const [editValue, setEditValue] = useState("")
 
-  // Percentage-based positions relative to 1000x1000 image
+  // Relative positions (percent-based)
   const dimensionPositions: Record<string, { x: number; y: number }> = {
     A: { x: 3, y: 27 },
     B: { x: 5, y: 38 },
@@ -76,60 +76,63 @@ export default function FeederDesign({
   }
 
   return (
-    <div className="w-full flex justify-center">
+    <div className="w-full flex justify-center px-2">
       <div className="relative w-full max-w-[1000px]">
-        <Image
-          src="/images/dimension-drawing.jpg"
-          alt="Feeder Technical Drawing"
-          width={1000}
-          height={1000}
-          className="w-full h-auto object-contain"
-          priority
-        />
+        {/* Image and overlays */}
+        <div className="relative w-full">
+          <Image
+            src="/images/dimension-drawing.jpg"
+            alt="Feeder Technical Drawing"
+            width={1000}
+            height={1000}
+            className="w-full h-auto object-contain"
+            priority
+          />
 
-        {/* Overlays */}
-        <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
-          {dimensions.map((dimension) => {
-            const position = dimensionPositions[dimension.id as keyof typeof dimensionPositions]
-            if (!position) return null
+          {/* Overlays */}
+          <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
+            {dimensions.map((dimension) => {
+              const position = dimensionPositions[dimension.id as keyof typeof dimensionPositions]
+              if (!position) return null
 
-            const isEditing = editingDimension === dimension.id
+              const isEditing = editingDimension === dimension.id
 
-            const style = {
-              left: `${position.x}%`,
-              top: `${position.y}%`,
-              transform: "translate(-50%, -50%)",
-              pointerEvents: "auto" as const,
-            }
+              const style = {
+                left: `${position.x}%`,
+                top: `${position.y}%`,
+                transform: "translate(-50%, -50%)",
+                pointerEvents: "auto" as const,
+              }
 
-            return (
-              <div
-                key={`dim-value-${dimension.id}`}
-                className={`absolute bg-white dark:bg-gray-800 text-black dark:text-white px-2 py-1 rounded border text-xs cursor-pointer ${
-                  activeDimension === dimension.id ? "border-blue-500" : "border-gray-300"
-                }`}
-                style={style}
-                onClick={() => !isEditing && handleDimensionClick(dimension.id)}
-              >
-                <div className="flex items-center gap-1">
-                  <span className="font-medium">{dimension.id}:</span>
-                  {isEditing ? (
-                    <Input
-                      type="number"
-                      value={editValue}
-                      onChange={handleInputChange}
-                      onBlur={handleInputBlur}
-                      onKeyDown={handleInputKeyDown}
-                      className="w-16 h-6 text-xs p-1"
-                      autoFocus
-                    />
-                  ) : (
-                    <span>{dimension.value ? `${dimension.value} mm` : "Click to edit"}</span>
-                  )}
+              return (
+                <div
+                  key={`dim-value-${dimension.id}`}
+                  className={`absolute bg-white dark:bg-gray-800 text-black dark:text-white px-2 py-1 rounded border text-xs cursor-pointer ${
+                    activeDimension === dimension.id ? "border-blue-500" : "border-gray-300"
+                  }`}
+                  style={style}
+                  onClick={() => !isEditing && handleDimensionClick(dimension.id)}
+                >
+                  <div className="flex items-center gap-1">
+                    <span className="font-medium">{dimension.id}:</span>
+                    {isEditing ? (
+                      <Input
+                        type="number"
+                        value={editValue}
+                        onChange={handleInputChange}
+                        onBlur={handleInputBlur}
+                        onKeyDown={handleInputKeyDown}
+                        className="w-16 h-6 text-xs p-1"
+                        autoFocus
+                      />
+                    ) : (
+                      <span>{dimension.value ? `${dimension.value} mm` : "Click to edit"}</span>
+                    )}
+                  </div>
                 </div>
-              </div>
-            )
-          })}
+              )
+            })}
+          </div>
         </div>
       </div>
     </div>
