@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
 type Dimension = {
   id: string
@@ -13,23 +13,32 @@ type DimensionsSummaryProps = {
 
 export default function DimensionsSummary({ dimensions }: DimensionsSummaryProps) {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Dimensions Summary</CardTitle>
+    <Card className="dark:border-gray-700">
+      <CardHeader className="pb-2">
+        <CardTitle className="text-lg">Dimensions Summary</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-          {dimensions.map((dimension) => (
-            <div key={dimension.id} className="border rounded-md p-3 bg-gray-50">
-              <div className="flex items-center justify-between mb-1">
-                <span className="font-medium">{dimension.id}:</span>
-                <span className="text-sm text-gray-500">{dimension.description}</span>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+          {dimensions.map((dimension) => {
+            const isEmpty = !dimension.value
+
+            return (
+              <div
+                key={dimension.id}
+                className={`border rounded-md p-2 bg-gray-50 dark:bg-gray-800 ${
+                  isEmpty ? "border-red-500 dark:border-red-400" : "border-gray-200 dark:border-gray-700"
+                }`}
+              >
+                <div className="flex items-center justify-between mb-1">
+                  <span className="font-medium text-sm">{dimension.id}:</span>
+                  <span className="text-xs text-gray-500 dark:text-gray-400">{dimension.description}</span>
+                </div>
+                <div className={`text-base font-semibold ${isEmpty ? "text-red-500 dark:text-red-400" : ""}`}>
+                  {isEmpty ? "Not set" : `${dimension.value} mm`}
+                </div>
               </div>
-              <div className={`text-lg font-semibold ${!dimension.value ? "text-red-500" : ""}`}>
-                {dimension.value ? `${dimension.value} mm` : "Not set"}
-              </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       </CardContent>
     </Card>

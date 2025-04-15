@@ -1,11 +1,11 @@
 "use client"
 
 import { useState, type ChangeEvent } from "react"
-import { Input } from "../components/ui/input"
-import { Label } from "../components/ui/label"
-import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card"
-import FeederDesign from "../components/feeder-design"
-import DimensionsSummary from "../components/dimensions-summary"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import FeederDesign from "@/components/feeder-design"
+import DimensionsSummary from "@/components/dimensions-summary"
 
 // Define the dimension type
 type Dimension = {
@@ -65,26 +65,26 @@ export default function FeederConfigPage() {
   }
 
   return (
-    <div className="container mx-auto py-8 max-w-6xl">
-      <h1 className="text-3xl font-bold mb-8 text-center">Feeder Configuration Tool</h1>
+    <div className="mx-auto py-6 px-4 max-w-4xl">
+      <h1 className="text-2xl font-bold mb-6 text-center">Feeder Configuration Tool</h1>
 
-      <div className="grid md:grid-cols-1 gap-8">
+      <div className="grid gap-6">
         {/* Machine Information */}
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle>Machine Information</CardTitle>
+        <Card className="mb-4">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg">Machine Information</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="space-y-2">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="space-y-1">
                 <Label htmlFor="machine-no">Machine no.</Label>
                 <Input id="machine-no" value={machineNo} onChange={handleMachineNoChange} />
               </div>
-              <div className="space-y-2">
+              <div className="space-y-1">
                 <Label htmlFor="rotation">Rotation</Label>
                 <select
                   id="rotation"
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                   value={rotation}
                   onChange={handleRotationChange}
                 >
@@ -92,7 +92,7 @@ export default function FeederConfigPage() {
                   <option value="Anti-clockwise">Anti-clockwise</option>
                 </select>
               </div>
-              <div className="space-y-2">
+              <div className="space-y-1">
                 <Label htmlFor="uph">UPH</Label>
                 <Input id="uph" value={uph} onChange={handleUphChange} />
               </div>
@@ -102,10 +102,10 @@ export default function FeederConfigPage() {
 
         {/* Feeder Design */}
         <Card>
-          <CardHeader>
-            <CardTitle>Feeder Design</CardTitle>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg">Feeder Design</CardTitle>
           </CardHeader>
-          <CardContent className="h-[800px]">
+          <CardContent>
             <FeederDesign
               dimensions={dimensions}
               activeDimension={activeDimension}

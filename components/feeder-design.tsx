@@ -1,7 +1,7 @@
 "use client"
 import Image from "next/image"
 import { useState, type ChangeEvent, type KeyboardEvent } from "react"
-import { Input } from "../components/ui/input"
+import { Input } from "@/components/ui/input"
 
 type Dimension = {
   id: string
@@ -26,23 +26,24 @@ export default function FeederDesign({
   const [editingDimension, setEditingDimension] = useState<string | null>(null)
   const [editValue, setEditValue] = useState("")
 
+  // Define positions as percentages for responsive positioning
   const dimensionPositions: Record<string, { x: number; y: number }> = {
-    A: { x: 3, y: 27 },
-    B: { x: 5, y: 38 },
-    C: { x: 6, y: 52 },
-    D: { x: 24, y: 47 },
-    E: { x: 33, y: 49 },
-    F: { x: 7, y: 88 },
-    G: { x: 40, y: 88 },
-    H: { x: 11, y: 102 },
-    I: { x: 43, y: 102 },
-    J: { x: 43, y: 62 },
-    K: { x: 27, y: 59 },
-    L: { x: 62, y: 48 },
-    M: { x: 22, y: -3 },
-    N: { x: 38, y: 7 },
-    O: { x: 40, y: 40 },
-    P: { x: 46, y: 20 },
+    A: { x: 10, y: 27 },
+    B: { x: 8, y: 40 },
+    C: { x: 18, y: 56 },
+    D: { x: 32, y: 45 },
+    E: { x: 40, y: 50 },
+    F: { x: 13, y: 85 },
+    G: { x: 44, y: 79 },
+    H: { x: 12, y: 98 },
+    I: { x: 49, y: 100 },
+    J: { x: 44, y: 62 },
+    K: { x: 32, y: 60 },
+    L: { x: 58, y: 46 },
+    M: { x: 32, y: -4 },
+    N: { x: 46, y: 4 },
+    O: { x: 42, y: 40 },
+    P: { x: 50, y: 33 },
   }
 
   const handleDimensionClick = (id: string) => {
@@ -75,63 +76,70 @@ export default function FeederDesign({
   }
 
   return (
-    <div className="w-full flex justify-center px-2">
-      <div className="relative w-full max-w-[1000px]">
-        {/* Image and overlays */}
-        <div className="relative w-full">
-          <Image
-            src="/images/dimension-drawing.jpg"
-            alt="Feeder Technical Drawing"
-            width={1000}
-            height={1000}
-            className="w-full h-auto object-contain"
-            priority
-          />
+    <div className="w-full flex justify-center">
+      {/* Force horizontal aspect ratio container */}
+      <div className="relative w-full" style={{ aspectRatio: "16/9", maxHeight: "500px" }}>
+        <Image
+          src="/images/dimension-drawing.jpg"
+          alt="Feeder Technical Drawing"
+          fill
+          className="object-contain"
+          priority
+        />
 
-          {/* Overlays */}
-          <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
-            {dimensions.map((dimension) => {
-              const position = dimensionPositions[dimension.id as keyof typeof dimensionPositions]
-              if (!position) return null
+        {/* Dimension overlays */}
+        <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
+          {dimensions.map((dimension) => {
+            const position = dimensionPositions[dimension.id as keyof typeof dimensionPositions]
+            if (!position) return null
 
-              const isEditing = editingDimension === dimension.id
+            const isEditing = editingDimension === dimension.id
+            const isEmpty = !dimension.value
 
-              const style = {
-                left: `${position.x}%`,
-                top: `${position.y}%`,
-                transform: "translate(-50%, -50%)",
-                pointerEvents: "auto" as const,
-              }
+            const style = {
+              left: `${position.x}%`,
+              top: `${position.y}%`,
+              minWidth: "40px", // Smaller minimum width
+              padding: "2px 4px", // Reduced padding
+              fontSize: "10px", // Smaller font size
+              pointerEvents: "auto" as const,
+            }
 
-              return (
-                <div
-                  key={`dim-value-${dimension.id}`}
-                  className={`absolute bg-white dark:bg-gray-800 text-black dark:text-white px-1 py-0.5 sm:px-2 sm:py-1 rounded border text-[10px] sm:text-xs cursor-pointer ${
-                    activeDimension === dimension.id ? "border-blue-500" : "border-gray-300"
-                  }`}
-                  style={style}
-                  onClick={() => !isEditing && handleDimensionClick(dimension.id)}
-                >
-                  <div className="flex items-center gap-1">
-                    <span className="font-semibold">{dimension.id}:</span>
-                    {isEditing ? (
-                      <Input
-                        type="number"
-                        value={editValue}
-                        onChange={handleInputChange}
-                        onBlur={handleInputBlur}
-                        onKeyDown={handleInputKeyDown}
-                        className="w-14 h-6 text-[10px] sm:text-xs p-1"
-                        autoFocus
-                      />
-                    ) : (
-                      <span>{dimension.value ? `${dimension.value} mm` : "Click to edit"}</span>
-                    )}
-                  </div>
+            return (
+              <div
+                key={`dim-value-${dimension.id}`}
+                className={`absolute bg-white/90 dark:bg-gray-800/90 rounded border transform -translate-x-1/2 -translate-y-1/2 cursor-pointer ${
+                  activeDimension === dimension.id
+                    ? "border-primary ring-1 ring-primary/50"
+                    : isEmpty
+                      ? "border-red-500 dark:border-red-400"
+                      : "border-gray-300 dark:border-gray-600"
+                }`}
+                style={style}
+                onClick={() => !isEditing && handleDimensionClick(dimension.id)}
+              >
+                <div className="flex items-center gap-1">
+                  <span className="font-medium">{dimension.id}:</span>
+                  {isEditing ? (
+                    <Input
+                      type="number"
+                      value={editValue}
+                      onChange={handleInputChange}
+                      onBlur={handleInputBlur}
+                      onKeyDown={handleInputKeyDown}
+                      className="w-12 h-6 text-xs p-1"
+                      style={{ minWidth: "40px", fontSize: "10px" }}
+                      autoFocus
+                    />
+                  ) : (
+                    <span className={isEmpty ? "text-red-500 dark:text-red-400" : ""}>
+                      {isEmpty ? "Click to edit" : `${dimension.value} mm`}
+                    </span>
+                  )}
                 </div>
-              )
-            })}
-          </div>
+              </div>
+            )
+          })}
         </div>
       </div>
     </div>
