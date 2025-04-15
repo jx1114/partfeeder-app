@@ -64,6 +64,7 @@ export default function FeederConfigPage() {
     setUph(e.target.value)
   }
 
+
   return (
     <div className="mx-auto py-6 px-4 max-w-4xl">
       <h1 className="text-2xl font-bold mb-6 text-center">Feeder Configuration Tool</h1>

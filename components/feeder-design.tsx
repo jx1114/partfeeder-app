@@ -28,20 +28,20 @@ export default function FeederDesign({
 
   // Define positions as percentages for responsive positioning
   const dimensionPositions: Record<string, { x: number; y: number }> = {
-    A: { x: 10, y: 27 },
-    B: { x: 8, y: 40 },
+    A: { x: 12, y: 27 },
+    B: { x: 10, y: 40 },
     C: { x: 18, y: 56 },
-    D: { x: 32, y: 45 },
-    E: { x: 40, y: 50 },
-    F: { x: 13, y: 85 },
-    G: { x: 44, y: 79 },
-    H: { x: 12, y: 98 },
-    I: { x: 49, y: 100 },
+    D: { x: 32, y: 44 },
+    E: { x: 36, y: 49 },
+    F: { x: 15, y: 85 },
+    G: { x: 42, y: 79 },
+    H: { x: 14, y: 98 },
+    I: { x: 48, y: 100 },
     J: { x: 44, y: 62 },
     K: { x: 32, y: 60 },
-    L: { x: 58, y: 46 },
+    L: { x: 60, y: 46 },
     M: { x: 32, y: -4 },
-    N: { x: 46, y: 4 },
+    N: { x: 44, y: 4 },
     O: { x: 42, y: 40 },
     P: { x: 50, y: 33 },
   }
@@ -133,7 +133,7 @@ export default function FeederDesign({
                     />
                   ) : (
                     <span className={isEmpty ? "text-red-500 dark:text-red-400" : ""}>
-                      {isEmpty ? "Click to edit" : `${dimension.value} mm`}
+                      {isEmpty ? " " : `${dimension.value} mm`}
                     </span>
                   )}
                 </div>
