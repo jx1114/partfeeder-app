@@ -26,24 +26,24 @@ export default function FeederDesign({
   const [editingDimension, setEditingDimension] = useState<string | null>(null)
   const [editValue, setEditValue] = useState("")
 
-  // Define positions as percentages for responsive positioning
+  // Fine-tuned positions to match exact label locations
   const dimensionPositions: Record<string, { x: number; y: number }> = {
-    A: { x: 12, y: 27 },
-    B: { x: 10, y: 40 },
-    C: { x: 18, y: 56 },
-    D: { x: 32, y: 44 },
-    E: { x: 36, y: 49 },
-    F: { x: 15, y: 85 },
-    G: { x: 42, y: 79 },
-    H: { x: 14, y: 98 },
-    I: { x: 48, y: 100 },
-    J: { x: 44, y: 62 },
-    K: { x: 32, y: 60 },
-    L: { x: 60, y: 46 },
-    M: { x: 32, y: -4 },
-    N: { x: 44, y: 4 },
-    O: { x: 42, y: 40 },
-    P: { x: 50, y: 33 },
+    A: { x: 15, y: 29 },
+    B: { x: 20, y: 42 },
+    C: { x: 19, y: 52 },
+    D: { x: 29, y: 49.5 },
+    E: { x: 34, y: 52 },
+    F: { x: 19.5, y: 85 },
+    G: { x: 41.5, y: 83 },
+    H: { x: 18, y: 99 },
+    I: { x: 43.5, y: 99 },
+    J: { x: 43.5, y: 67 },
+    K: { x: 31.5, y: 56 },
+    L: { x: 59.5, y: 51 },
+    M: { x: 30, y: 0 },
+    N: { x: 32, y: 4 },
+    O: { x: 42, y: 34 },
+    P: { x: 45.5, y: 30 },
   }
 
   const handleDimensionClick = (id: string) => {
@@ -99,16 +99,14 @@ export default function FeederDesign({
             const style = {
               left: `${position.x}%`,
               top: `${position.y}%`,
-              minWidth: "40px", // Smaller minimum width
-              padding: "2px 4px", // Reduced padding
-              fontSize: "10px", // Smaller font size
+              transform: "translate(-50%, -50%)",
               pointerEvents: "auto" as const,
             }
 
             return (
               <div
                 key={`dim-value-${dimension.id}`}
-                className={`absolute bg-white/90 dark:bg-gray-800/90 rounded border transform -translate-x-1/2 -translate-y-1/2 cursor-pointer ${
+                className={`absolute bg-white dark:bg-gray-800 rounded-sm border cursor-pointer ${
                   activeDimension === dimension.id
                     ? "border-primary ring-1 ring-primary/50"
                     : isEmpty
@@ -118,9 +116,8 @@ export default function FeederDesign({
                 style={style}
                 onClick={() => !isEditing && handleDimensionClick(dimension.id)}
               >
-                <div className="flex items-center gap-1">
-                  <span className="font-medium">{dimension.id}:</span>
-                  {isEditing ? (
+                {isEditing ? (
+                  <div className="p-1">
                     <Input
                       type="number"
                       value={editValue}
@@ -128,15 +125,14 @@ export default function FeederDesign({
                       onBlur={handleInputBlur}
                       onKeyDown={handleInputKeyDown}
                       className="w-12 h-6 text-xs p-1"
-                      style={{ minWidth: "40px", fontSize: "10px" }}
                       autoFocus
                     />
-                  ) : (
-                    <span className={isEmpty ? "text-red-500 dark:text-red-400" : ""}>
-                      {isEmpty ? " " : `${dimension.value} mm`}
-                    </span>
-                  )}
-                </div>
+                  </div>
+                ) : (
+                  <div className="px-1.5 py-0.5 text-xs">
+                    {isEmpty ? <span className="font-medium">{dimension.id}</span> : <span>{dimension.value} mm</span>}
+                  </div>
+                )}
               </div>
             )
           })}
