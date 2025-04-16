@@ -1,9 +1,11 @@
 "use client"
 
-import { useState, type ChangeEvent } from "react"
+import { useState, type ChangeEvent, useRef } from "react"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Download } from "lucide-react"
 import FeederDesign from "@/components/feeder-design"
 import DimensionsSummary from "@/components/dimensions-summary"
 
@@ -40,6 +42,8 @@ export default function FeederConfigPage() {
   const [machineNo, setMachineNo] = useState("")
   const [rotation, setRotation] = useState("Clockwise")
   const [uph, setUph] = useState("")
+  const contentRef = useRef<HTMLDivElement>(null)
+  const [isPrinting, setIsPrinting] = useState(false)
 
   // Update dimension value
   const updateDimension = (id: string, value: string) => {
@@ -64,12 +68,41 @@ export default function FeederConfigPage() {
     setUph(e.target.value)
   }
 
+  // Simple print function
+  const handlePrint = () => {
+    if (isPrinting) return
+
+    setIsPrinting(true)
+
+    try {
+      // Store original title
+      const originalTitle = document.title
+      // Set filename as title
+      document.title = `Feeder_Configuration_${machineNo || "Report"}`
+
+      // Print
+      window.print()
+
+      // Restore title
+      document.title = originalTitle
+    } catch (error) {
+      console.error("Error printing:", error)
+    } finally {
+      setIsPrinting(false)
+    }
+  }
 
   return (
     <div className="mx-auto py-6 px-4 max-w-4xl">
-      <h1 className="text-2xl font-bold mb-6 text-center">Feeder Configuration Tool</h1>
+      <div className="flex justify-between items-center mb-6 no-print">
+        <h1 className="text-2xl font-bold text-center">Feeder Configuration Tool</h1>
+        <Button onClick={handlePrint} disabled={isPrinting} className="flex items-center gap-2">
+          <Download size={16} />
+          {isPrinting ? "Preparing..." : "Save as PDF"}
+        </Button>
+      </div>
 
-      <div className="grid gap-6">
+      <div className="grid gap-6" ref={contentRef}>
         {/* Machine Information */}
         <Card className="mb-4">
           <CardHeader className="pb-2">
