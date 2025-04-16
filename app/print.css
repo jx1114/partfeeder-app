@@ -1,7 +1,7 @@
 @media print {
     @page {
       size: portrait;
-      margin: 1cm;
+      margin: 0.5cm;
     }
   
     body {
@@ -19,7 +19,8 @@
     .card {
       break-inside: avoid;
       page-break-inside: avoid;
-      margin-bottom: 1cm;
+      margin-bottom: 0.3cm !important;
+      border: 1px solid #ddd !important;
     }
   
     /* Ensure text is readable */
@@ -31,6 +32,25 @@
     /* Make sure borders are visible */
     .border {
       border: 1px solid #000 !important;
+    }
+  
+    /* Optimize spacing for A4 */
+    .gap-3 {
+      gap: 0.3rem !important;
+    }
+  
+    .p-2 {
+      padding: 0.3rem !important;
+    }
+  
+    .py-1 {
+      padding-top: 0.15rem !important;
+      padding-bottom: 0.15rem !important;
+    }
+  
+    .px-3 {
+      padding-left: 0.5rem !important;
+      padding-right: 0.5rem !important;
     }
   }
   

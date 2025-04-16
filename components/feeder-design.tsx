@@ -26,24 +26,24 @@ export default function FeederDesign({
   const [editingDimension, setEditingDimension] = useState<string | null>(null)
   const [editValue, setEditValue] = useState("")
 
-  // Fine-tuned positions to match exact label locations
+  // Fine-tuned positions as percentages for responsive positioning
   const dimensionPositions: Record<string, { x: number; y: number }> = {
-    A: { x: 15, y: 29 },
-    B: { x: 20, y: 42 },
-    C: { x: 19, y: 52 },
-    D: { x: 29, y: 49.5 },
-    E: { x: 34, y: 52 },
-    F: { x: 19.5, y: 85 },
-    G: { x: 41.5, y: 83 },
-    H: { x: 18, y: 99 },
+    A: { x: 20, y: 29.5 },
+    B: { x: 24, y: 42 },
+    C: { x: 23, y: 51.5 },
+    D: { x: 31.7, y: 49.5 },
+    E: { x: 36, y: 52 },
+    F: { x: 23.8, y: 85 },
+    G: { x: 42.5, y: 83.5 },
+    H: { x: 23, y: 98.5 },
     I: { x: 43.5, y: 99 },
-    J: { x: 43.5, y: 67 },
-    K: { x: 31.5, y: 56 },
-    L: { x: 59.5, y: 51 },
-    M: { x: 30, y: 0 },
-    N: { x: 32, y: 4 },
-    O: { x: 42, y: 34 },
-    P: { x: 45.5, y: 30 },
+    J: { x: 44.5, y: 67.5 },
+    K: { x: 34.3, y: 55.8 },
+    L: { x: 58, y: 51.5 },
+    M: { x: 32.5, y: 1 },
+    N: { x: 34.5, y: 4 },
+    O: { x: 43, y: 34 },
+    P: { x: 46, y: 29.5 },
   }
 
   const handleDimensionClick = (id: string) => {
@@ -76,9 +76,9 @@ export default function FeederDesign({
   }
 
   return (
-    <div className="w-full flex justify-center">
+    <div className="w-full h-full flex justify-center">
       {/* Force horizontal aspect ratio container */}
-      <div className="relative w-full" style={{ aspectRatio: "16/9", maxHeight: "500px" }}>
+      <div className="relative w-full h-full">
         <Image
           src="/images/dimension-drawing.jpg"
           alt="Feeder Technical Drawing"
@@ -103,6 +103,31 @@ export default function FeederDesign({
               pointerEvents: "auto" as const,
             }
 
+            // Make filled buttons much smaller, showing only the number
+            if (!isEmpty && !isEditing) {
+              return (
+                <div
+                  key={`dim-value-${dimension.id}`}
+                  className={`absolute bg-white dark:bg-gray-800 rounded-sm border cursor-pointer text-center ${
+                    activeDimension === dimension.id
+                      ? "border-primary ring-1 ring-primary/50"
+                      : "border-gray-300 dark:border-gray-600"
+                  }`}
+                  style={{
+                    ...style,
+                    minWidth: "16px",
+                    height: "16px",
+                    padding: "0px",
+                    fontSize: "9px",
+                    lineHeight: "16px",
+                  }}
+                  onClick={() => handleDimensionClick(dimension.id)}
+                >
+                  {dimension.value}
+                </div>
+              )
+            }
+
             return (
               <div
                 key={`dim-value-${dimension.id}`}
@@ -124,13 +149,13 @@ export default function FeederDesign({
                       onChange={handleInputChange}
                       onBlur={handleInputBlur}
                       onKeyDown={handleInputKeyDown}
-                      className="w-12 h-6 text-xs p-1"
+                      className="w-10 h-5 text-xs p-1"
                       autoFocus
                     />
                   </div>
                 ) : (
-                  <div className="px-1.5 py-0.5 text-xs">
-                    {isEmpty ? <span className="font-medium">{dimension.id}</span> : <span>{dimension.value} mm</span>}
+                  <div className="px-1 py-0.5 text-[9px]">
+                    <span className="font-medium">{dimension.id}</span>
                   </div>
                 )}
               </div>

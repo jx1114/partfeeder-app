@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, type ChangeEvent, useRef } from "react"
+import { useState, type ChangeEvent } from "react"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -42,7 +42,6 @@ export default function FeederConfigPage() {
   const [machineNo, setMachineNo] = useState("")
   const [rotation, setRotation] = useState("Clockwise")
   const [uph, setUph] = useState("")
-  const contentRef = useRef<HTMLDivElement>(null)
   const [isPrinting, setIsPrinting] = useState(false)
 
   // Update dimension value
@@ -75,16 +74,30 @@ export default function FeederConfigPage() {
     setIsPrinting(true)
 
     try {
-      // Store original title
-      const originalTitle = document.title
+      // Add print styles
+      const style = document.createElement("style")
+      style.innerHTML = `
+        @media print {
+          @page { size: portrait; margin: 0.5cm; }
+          body { 
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+          .no-print { display: none !important; }
+        }
+      `
+      document.head.appendChild(style)
+
       // Set filename as title
+      const originalTitle = document.title
       document.title = `Feeder_Configuration_${machineNo || "Report"}`
 
       // Print
       window.print()
 
-      // Restore title
+      // Cleanup
       document.title = originalTitle
+      document.head.removeChild(style)
     } catch (error) {
       console.error("Error printing:", error)
     } finally {
@@ -93,32 +106,36 @@ export default function FeederConfigPage() {
   }
 
   return (
-    <div className="mx-auto py-6 px-4 max-w-4xl">
-      <div className="flex justify-between items-center mb-6 no-print">
-        <h1 className="text-2xl font-bold text-center">Feeder Configuration Tool</h1>
-        <Button onClick={handlePrint} disabled={isPrinting} className="flex items-center gap-2">
-          <Download size={16} />
+    <div className="mx-auto py-4 px-3 max-w-4xl print:p-0 print:max-w-none">
+      <div className="flex justify-between items-center mb-3 no-print">
+        <h1 className="text-xl font-bold">Feeder Configuration Tool</h1>
+        <Button onClick={handlePrint} disabled={isPrinting} className="flex items-center gap-2 h-8 px-3 text-xs">
+          <Download size={14} />
           {isPrinting ? "Preparing..." : "Save as PDF"}
         </Button>
       </div>
 
-      <div className="grid gap-6" ref={contentRef}>
-        {/* Machine Information */}
-        <Card className="mb-4">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-lg">Machine Information</CardTitle>
+      <div className="grid gap-3 print:gap-2">
+        {/* Machine Information - Made smaller */}
+        <Card className="mb-2 shadow-sm">
+          <CardHeader className="py-1 px-3">
+            <CardTitle className="text-sm">Machine Information</CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="space-y-1">
-                <Label htmlFor="machine-no">Machine no.</Label>
-                <Input id="machine-no" value={machineNo} onChange={handleMachineNoChange} />
+          <CardContent className="py-2 px-3">
+            <div className="grid grid-cols-3 gap-3">
+              <div className="space-y-0">
+                <Label htmlFor="machine-no" className="text-xs">
+                  Machine no.
+                </Label>
+                <Input id="machine-no" value={machineNo} onChange={handleMachineNoChange} className="h-7 text-xs" />
               </div>
-              <div className="space-y-1">
-                <Label htmlFor="rotation">Rotation</Label>
+              <div className="space-y-0">
+                <Label htmlFor="rotation" className="text-xs">
+                  Rotation
+                </Label>
                 <select
                   id="rotation"
-                  className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  className="flex h-7 w-full rounded-md border border-input bg-background px-2 py-1 text-xs"
                   value={rotation}
                   onChange={handleRotationChange}
                 >
@@ -126,30 +143,34 @@ export default function FeederConfigPage() {
                   <option value="Anti-clockwise">Anti-clockwise</option>
                 </select>
               </div>
-              <div className="space-y-1">
-                <Label htmlFor="uph">UPH</Label>
-                <Input id="uph" value={uph} onChange={handleUphChange} />
+              <div className="space-y-0">
+                <Label htmlFor="uph" className="text-xs">
+                  UPH
+                </Label>
+                <Input id="uph" value={uph} onChange={handleUphChange} className="h-7 text-xs" />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* Feeder Design */}
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-lg">Feeder Design</CardTitle>
+        {/* Feeder Design - Made bigger */}
+        <Card className="shadow-sm">
+          <CardHeader className="py-1 px-3">
+            <CardTitle className="text-sm">Feeder Design</CardTitle>
           </CardHeader>
-          <CardContent>
-            <FeederDesign
-              dimensions={dimensions}
-              activeDimension={activeDimension}
-              onPartClick={handlePartClick}
-              onDimensionChange={updateDimension}
-            />
+          <CardContent className="p-2">
+            <div className="h-[400px] print:h-[450px]">
+              <FeederDesign
+                dimensions={dimensions}
+                activeDimension={activeDimension}
+                onPartClick={handlePartClick}
+                onDimensionChange={updateDimension}
+              />
+            </div>
           </CardContent>
         </Card>
 
-        {/* Dimensions Summary */}
+        {/* Dimensions Summary - Made more compact */}
         <DimensionsSummary dimensions={dimensions} />
       </div>
     </div>
