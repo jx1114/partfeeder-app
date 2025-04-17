@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, type ChangeEvent } from "react"
+import { useState, type ChangeEvent, useRef } from "react"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -43,6 +43,7 @@ export default function FeederConfigPage() {
   const [rotation, setRotation] = useState("Clockwise")
   const [uph, setUph] = useState("")
   const [isPrinting, setIsPrinting] = useState(false)
+  const a4ContainerRef = useRef<HTMLDivElement>(null)
 
   // Update dimension value
   const updateDimension = (id: string, value: string) => {
@@ -67,27 +68,13 @@ export default function FeederConfigPage() {
     setUph(e.target.value)
   }
 
-  // Simple print function
+  // Print function
   const handlePrint = () => {
     if (isPrinting) return
 
     setIsPrinting(true)
 
     try {
-      // Add print styles
-      const style = document.createElement("style")
-      style.innerHTML = `
-        @media print {
-          @page { size: portrait; margin: 0.5cm; }
-          body { 
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
-          }
-          .no-print { display: none !important; }
-        }
-      `
-      document.head.appendChild(style)
-
       // Set filename as title
       const originalTitle = document.title
       document.title = `Feeder_Configuration_${machineNo || "Report"}`
@@ -97,7 +84,6 @@ export default function FeederConfigPage() {
 
       // Cleanup
       document.title = originalTitle
-      document.head.removeChild(style)
     } catch (error) {
       console.error("Error printing:", error)
     } finally {
@@ -106,72 +92,90 @@ export default function FeederConfigPage() {
   }
 
   return (
-    <div className="mx-auto py-4 px-3 max-w-4xl print:p-0 print:max-w-none">
-      <div className="flex justify-between items-center mb-3 no-print">
-        <h1 className="text-xl font-bold">Feeder Configuration Tool</h1>
+    <div className="flex justify-center items-start min-h-screen bg-gray-100 dark:bg-gray-900 p-4 print:p-0 print:bg-white">
+      {/* Controls outside the A4 container - only visible on screen */}
+      <div className="fixed top-4 right-4 z-10 no-print">
         <Button onClick={handlePrint} disabled={isPrinting} className="flex items-center gap-2 h-8 px-3 text-xs">
           <Download size={14} />
           {isPrinting ? "Preparing..." : "Save as PDF"}
         </Button>
       </div>
 
-      <div className="grid gap-3 print:gap-2">
-        {/* Machine Information - Made smaller */}
-        <Card className="mb-2 shadow-sm">
-          <CardHeader className="py-1 px-3">
-            <CardTitle className="text-sm">Machine Information</CardTitle>
-          </CardHeader>
-          <CardContent className="py-2 px-3">
-            <div className="grid grid-cols-3 gap-3">
-              <div className="space-y-0">
-                <Label htmlFor="machine-no" className="text-xs">
-                  Machine no.
-                </Label>
-                <Input id="machine-no" value={machineNo} onChange={handleMachineNoChange} className="h-7 text-xs" />
-              </div>
-              <div className="space-y-0">
-                <Label htmlFor="rotation" className="text-xs">
-                  Rotation
-                </Label>
-                <select
-                  id="rotation"
-                  className="flex h-7 w-full rounded-md border border-input bg-background px-2 py-1 text-xs"
-                  value={rotation}
-                  onChange={handleRotationChange}
-                >
-                  <option value="Clockwise">Clockwise</option>
-                  <option value="Anti-clockwise">Anti-clockwise</option>
-                </select>
-              </div>
-              <div className="space-y-0">
-                <Label htmlFor="uph" className="text-xs">
-                  UPH
-                </Label>
-                <Input id="uph" value={uph} onChange={handleUphChange} className="h-7 text-xs" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+      {/* A4 Container */}
+      <div
+        ref={a4ContainerRef}
+        className="a4-container bg-white dark:bg-gray-800 shadow-lg print:shadow-none overflow-hidden"
+      >
+        <div className="a4-content p-[10mm]">
+          {/* Page Title */}
+          <h1 className="text-xl font-bold text-center mb-4">Feeder Configuration Report</h1>
 
-        {/* Feeder Design - Made bigger */}
-        <Card className="shadow-sm">
-          <CardHeader className="py-1 px-3">
-            <CardTitle className="text-sm">Feeder Design</CardTitle>
-          </CardHeader>
-          <CardContent className="p-2">
-            <div className="h-[400px] print:h-[450px]">
-              <FeederDesign
-                dimensions={dimensions}
-                activeDimension={activeDimension}
-                onPartClick={handlePartClick}
-                onDimensionChange={updateDimension}
-              />
-            </div>
-          </CardContent>
-        </Card>
+          <div className="grid gap-4 print:gap-4">
+            {/* Machine Information */}
+            <Card className="shadow-sm">
+              <CardHeader className="py-1 px-3">
+                <CardTitle className="text-sm">Machine Information</CardTitle>
+              </CardHeader>
+              <CardContent className="py-2 px-3">
+                <div className="grid grid-cols-3 gap-3">
+                  <div className="space-y-0">
+                    <Label htmlFor="machine-no" className="text-xs">
+                      Machine no.
+                    </Label>
+                    <Input id="machine-no" value={machineNo} onChange={handleMachineNoChange} className="h-7 text-xs" />
+                  </div>
+                  <div className="space-y-0">
+                    <Label htmlFor="rotation" className="text-xs">
+                      Rotation
+                    </Label>
+                    <select
+                      id="rotation"
+                      className="flex h-7 w-full rounded-md border border-input bg-background px-2 py-0 text-xs"
+                      value={rotation}
+                      onChange={handleRotationChange}
+                    >
+                      <option value="Clockwise">Clockwise</option>
+                      <option value="Anti-clockwise">Anti-clockwise</option>
+                    </select>
+                  </div>
+                  <div className="space-y-0">
+                    <Label htmlFor="uph" className="text-xs">
+                      UPH
+                    </Label>
+                    <Input id="uph" value={uph} onChange={handleUphChange} className="h-7 text-xs" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
 
-        {/* Dimensions Summary - Made more compact */}
-        <DimensionsSummary dimensions={dimensions} />
+            {/* Feeder Design */}
+            <Card className="shadow-sm">
+              <CardHeader className="py-1 px-3">
+                <CardTitle className="text-sm">Feeder Design</CardTitle>
+              </CardHeader>
+              <CardContent className="p-2">
+                <div className="h-[350px] print:h-[350px]">
+                  <FeederDesign
+                    dimensions={dimensions}
+                    activeDimension={activeDimension}
+                    onPartClick={handlePartClick}
+                    onDimensionChange={updateDimension}
+                  />
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Dimensions Summary */}
+            <DimensionsSummary dimensions={dimensions} />
+          </div>
+
+          {/* Footer with timestamp */}
+          <div className="mt-4 text-center text-xs text-gray-500">
+            <p>
+              Generated on {new Date().toLocaleDateString()} at {new Date().toLocaleTimeString()}
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   )
